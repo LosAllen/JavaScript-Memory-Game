@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         moveCountDisplay.textContent = moves;
         clearInterval(interval);
         startTimer();
-        
+
         gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, 100px)`;
 
         let selectedEmojis = shuffle([...emojis, ...emojis]).slice(0, totalPairs);
@@ -34,6 +34,16 @@ document.addEventListener("DOMContentLoaded", () => {
             card.classList.add("card");
             card.dataset.index = index;
             card.dataset.emoji = emoji;
+
+            const front = document.createElement("div");
+            front.classList.add("front");
+
+            const back = document.createElement("div");
+            back.classList.add("back");
+            back.textContent = emoji;
+
+            card.appendChild(front);
+            card.appendChild(back);
             card.addEventListener("click", flipCard);
             gameBoard.appendChild(card);
         });
@@ -45,17 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let card = this;
         if (flippedCards.length === 2 || card.classList.contains("flipped")) return;
 
-        gsap.to(card, { rotationY: 180, duration: 0.5 });
-        setTimeout(() => {
-            card.classList.add("flipped");
-            card.textContent = card.dataset.emoji;
-            flippedCards.push(card);
-            if (flippedCards.length === 2) {
-                moves++;
-                moveCountDisplay.textContent = moves;
-                checkMatch();
-            }
-        }, 250);
+        card.classList.add("flipped");
+        flippedCards.push(card);
+
+        if (flippedCards.length === 2) {
+            moves++;
+            moveCountDisplay.textContent = moves;
+            checkMatch();
+        }
     }
 
     function checkMatch() {
@@ -69,12 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             setTimeout(() => {
-                gsap.to(first, { rotationY: 0, duration: 0.5 });
-                gsap.to(second, { rotationY: 0, duration: 0.5 });
                 first.classList.remove("flipped");
-                first.textContent = "";
                 second.classList.remove("flipped");
-                second.textContent = "";
                 flippedCards = [];
             }, 800);
         }
@@ -93,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     difficultyButtons.forEach(button => {
         button.addEventListener("click", (e) => {
-            let difficulty = e.target.dataset.difficulty;
+            let difficulty = e.target.id;
             let size = difficulty === "easy" ? 4 : difficulty === "medium" ? 4 : 6;
             let newEmojis = difficulty === "hard" ? 
                 ["🍎", "🍌", "🍇", "🍉", "🍓", "🍒", "🍍", "🥑", "🍋", "🥕", "🍑", "🥭", "🥝", "🌽", "🍆", "🍔", "🍕", "🍩"] : emojis;
