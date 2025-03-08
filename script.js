@@ -24,8 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(interval);
         startTimer();
 
+        // Adjust game board size
         gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, 100px)`;
+        gameBoard.style.gridTemplateRows = `repeat(${gridSize === 4 ? 2 : gridSize}, 100px)`;
 
+        // Select the correct number of emojis for the difficulty
         let selectedEmojis = shuffle([...emojis, ...emojis]).slice(0, totalPairs);
         let gameCards = shuffle([...selectedEmojis, ...selectedEmojis]);
 
@@ -35,12 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
             card.dataset.index = index;
             card.dataset.emoji = emoji;
 
+            // Create front and back elements for flipping animation
             const front = document.createElement("div");
             front.classList.add("front");
 
             const back = document.createElement("div");
             back.classList.add("back");
-            back.textContent = emoji;
+            back.textContent = emoji; // Emoji on the back
 
             card.appendChild(front);
             card.appendChild(back);
