@@ -7,16 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const difficultyButtons = document.querySelectorAll(".difficulty button");
 
     let emojis = ["🍎", "🍌", "🍇", "🍉", "🍓", "🍒", "🍍", "🥑"];
-    let gridSize = 4, moves = 0, timer = 0, interval, flippedCards = [], matchedPairs = 0, totalPairs;
+    let gridSize = 4, gridRows = 2, moves = 0, timer = 0, interval, flippedCards = [], matchedPairs = 0, totalPairs;
 
     function shuffle(array) {
         return array.sort(() => Math.random() - 0.5);
     }
 
-    function createBoard(size) {
+    function createBoard(size, rows) {
         gameBoard.innerHTML = "";
         gridSize = size;
-        totalPairs = (gridSize * gridSize) / 2;
+        gridRows = rows;
+        totalPairs = (gridSize * gridRows) / 2;
         matchedPairs = 0;
         flippedCards = [];
         moves = 0;
@@ -24,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(interval);
         startTimer();
 
-        // Adjust game board size
+        // Set correct grid dimensions
         gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, 100px)`;
-        gameBoard.style.gridTemplateRows = `repeat(${gridSize === 4 ? 2 : gridSize}, 100px)`;
+        gameBoard.style.gridTemplateRows = `repeat(${gridRows}, 100px)`;
 
         // Select the correct number of emojis for the difficulty
         let selectedEmojis = shuffle([...emojis, ...emojis]).slice(0, totalPairs);
@@ -96,19 +97,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
-    restartBtn.addEventListener("click", () => createBoard(gridSize));
+    restartBtn.addEventListener("click", () => createBoard(gridSize, gridRows));
 
     difficultyButtons.forEach(button => {
         button.addEventListener("click", (e) => {
             let difficulty = e.target.id;
             let size = difficulty === "easy" ? 4 : difficulty === "medium" ? 4 : 6;
+            let rows = difficulty === "easy" ? 2 : difficulty === "medium" ? 4 : 6;
             let newEmojis = difficulty === "hard" ? 
                 ["🍎", "🍌", "🍇", "🍉", "🍓", "🍒", "🍍", "🥑", "🍋", "🥕", "🍑", "🥭", "🥝", "🌽", "🍆", "🍔", "🍕", "🍩"] : emojis;
             
             emojis = newEmojis;
-            createBoard(size);
+            createBoard(size, rows);
         });
     });
 
-    createBoard(gridSize);
+    // Start with Easy Mode (2x4)
+    createBoard(4, 2);
 });
